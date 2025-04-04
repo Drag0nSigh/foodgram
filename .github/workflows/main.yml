@@ -2,6 +2,7 @@ name: Main Foodgram workflow
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -31,7 +32,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip 
           pip install flake8==6.0.0 flake8-isort==6.0.0
-          pip install -r ./backend/requirements.txt
+          pip install -r ./backend/foodgram/requirements.txt
 
       - name: Test with flake8 and django tests
         env:
@@ -40,7 +41,6 @@ jobs:
           POSTGRES_DB: foodgram
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
-          SECRET_KEY_DJANGO: ${{ secrets.SECRET_KEY }}
         run: |
           python -m flake8 backend/foodgram/
 
@@ -81,6 +81,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          npm config set legacy-peer-deps true
           cd frontend/
           npm ci
 
