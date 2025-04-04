@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('SECRET_KEY_DJANGO', 'secret')
 
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS','').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 INSTALLED_APPS = [
@@ -170,8 +170,8 @@ LOGGING = {
 
 
 DJOSER = {
-    'LOGIN_FIELD': 'email',  # Используем email для логина вместо username
-    'USER_ID_FIELD': 'id',   # Поле для идентификации пользователя
+    'LOGIN_FIELD': 'email',  # РСЃРїРѕР»СЊР·СѓРµРј email РґР»СЏ Р»РѕРіРёРЅР° РІРјРµСЃС‚Рѕ username
+    'USER_ID_FIELD': 'id',   # РџРѕР»Рµ РґР»СЏ РёРґРµРЅС‚РёС„РёРєР°С†РёРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     'SERIALIZERS': {
         'user_create': 'api.serializers.SignUpSerializer',
         'user': 'api.serializers.UserSerializer',

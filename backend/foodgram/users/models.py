@@ -1,8 +1,9 @@
 import logging
 
-from core.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERS_CHAR
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from core.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERS_CHAR
 
 logger = logging.getLogger('models')
 

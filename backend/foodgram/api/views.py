@@ -3,25 +3,26 @@ import csv
 import logging
 import os
 
-from api.permissions import IsAuthor
-from api.serializers import (AvatarSerializer, IngredientSerializer,
-                             RecipeCreateSerializer, RecipeReadSerializer,
-                             RecipeShortSerializer, TagSerializer,
-                             UserFavouriteSerializer, UserSerializer)
-from core.constants import MAIN_URL
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet
-from recipes.models import (Ingredient, Recipe, RecipeIngredient, Tag,
-                            UserFavourite, UserShoppingCart)
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from api.permissions import IsAuthor
+from api.serializers import (AvatarSerializer, IngredientSerializer,
+                             RecipeCreateSerializer, RecipeReadSerializer,
+                             RecipeShortSerializer, TagSerializer,
+                             UserFavouriteSerializer, UserSerializer)
+from core.constants import MAIN_URL
+from recipes.models import (Ingredient, Recipe, RecipeIngredient, Tag,
+                            UserFavourite, UserShoppingCart)
 
 logger = logging.getLogger('views')
 User = get_user_model()
