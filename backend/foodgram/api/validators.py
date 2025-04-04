@@ -1,8 +1,7 @@
 import re
 
-from rest_framework import serializers
-
 from core.constants import PATTERN_VALID_USERNAME, URL_PATH_ME
+from rest_framework import serializers
 
 
 def username_by_pattern(username):
