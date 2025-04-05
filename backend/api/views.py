@@ -464,6 +464,8 @@ class CustomUserViewSet(UserViewSet):
 
 
 class ShortLinkRedirectView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, short_code, *args, **kwargs):
         try:
             recipe_id = base64.urlsafe_b64decode(short_code.encode()).decode()
