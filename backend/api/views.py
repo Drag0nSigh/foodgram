@@ -473,4 +473,4 @@ class ShortLinkRedirectView(APIView):
         except (ValueError, UnicodeDecodeError):
             raise Http404('Ссылка не найдена')
 
-        return redirect(f'/api/recipes/{recipe_id}/')
+        return redirect(f'/recipes/{recipe_id}/')
