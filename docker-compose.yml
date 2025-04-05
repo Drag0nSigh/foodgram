@@ -2,8 +2,7 @@ version: '3.3'
 
 volumes:
   pg_data:
-  backend_static:
-  frontend_static:
+  static:
   media:
   docs:
 
