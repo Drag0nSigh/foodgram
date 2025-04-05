@@ -36,6 +36,6 @@ services:
       - "8090:80"
     volumes:
       - backend_static:/static
-      - frontend_static:/frontend_static
+      - frontend_static:/static
       - media:/media
       - docs:/static/docs/
