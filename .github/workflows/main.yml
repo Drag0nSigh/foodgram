@@ -32,7 +32,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip 
           pip install flake8==7.2.0 flake8-isort==6.1.2
-          pip install -r ./backend/foodgram/requirements.txt
+          pip install -r ./backend/requirements.txt
 
       - name: Test with flake8 and django tests
         env:
@@ -150,5 +150,5 @@ jobs:
             sudo docker compose -f docker-compose.yml pull
             sudo docker compose -f docker-compose.yml down
             sudo docker compose -f docker-compose.yml up -d
-            sudo docker compose -f docker-compose.yml exec backend python foodgram/manage.py migrate
-            sudo docker compose -f docker-compose.yml exec backend python foodgram/manage.py collectstatic
+            sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
+            sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic

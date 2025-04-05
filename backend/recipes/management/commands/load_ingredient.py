@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.load_ingredient(
             os.path.join(
-                os.path.dirname(settings.BASE_DIR),
+                settings.BASE_DIR,
                 'data',
                 'ingredients.csv'
             )
