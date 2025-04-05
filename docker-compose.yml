@@ -30,7 +30,7 @@ services:
 
   nginx:
     container_name: foodgram-proxy
-    image: nginx:1.25.4-alpine
+    image: drag0nsigh/foodgram_gateway
     ports:
       - "8090:80"
     volumes:
