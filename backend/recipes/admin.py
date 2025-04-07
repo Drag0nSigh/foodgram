@@ -24,7 +24,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'name',
         'author',
     )
-    search_fields = ('name', 'author')
+    search_fields = ('name', 'author__username')
     list_filter = ('tags',)
     readonly_fields = ('favourite_count',)
 
