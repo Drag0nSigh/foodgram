@@ -17,7 +17,7 @@ services:
     image: drag0nsigh/foodgram_backend
     env_file: .env
     volumes:
-      - static:/app/collected_static
+      - static:/backend_static
       - media:/app/media
       - docs:/app/docs
     depends_on:

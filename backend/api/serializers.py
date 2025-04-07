@@ -1,14 +1,20 @@
 import base64
 import logging
 
-from api.validators import username_by_path_me, username_by_pattern
-from core.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERS_CHAR
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from drf_base64.fields import Base64ImageField
-from recipes.models import (Ingredient, Recipe, RecipeIngredient, Tag,
-                            UserFavourite)
 from rest_framework import serializers
+
+from api.validators import username_by_path_me, username_by_pattern
+from core.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERS_CHAR
+from recipes.models import (
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Tag,
+    UserFavourite
+)
 
 User = get_user_model()
 

@@ -1,6 +1,13 @@
 from django.contrib import admin
-from recipes.models import (Ingredient, Recipe, RecipeIngredient, Tag,
-                            UserFavourite, UserShoppingCart)
+
+from recipes.models import (
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Tag,
+    UserFavourite,
+    UserShoppingCart
+)
 from users.models import User
 
 
@@ -17,7 +24,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'name',
         'author',
     )
-    search_fields = ['name', 'author']
+    search_fields = ('name', 'author')
     list_filter = ('tags',)
     readonly_fields = ('favourite_count',)
 
