@@ -143,7 +143,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'download_shopping_cart',
         ]:
             return [IsAuthenticated()]
-        if self.action in ['update', 'partial_update', 'destroy',]:
+        if self.action in ['update', 'partial_update', 'destroy', ]:
             permissions = [IsAuthenticated(), IsAuthor()]
             return permissions
         return [AllowAny()]
