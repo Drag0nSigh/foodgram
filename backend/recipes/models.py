@@ -86,9 +86,7 @@ class Recipe(models.Model):
         verbose_name='Время приготовления (в минутах)',
         help_text=f'Обязательное поле. Время приготовления (в минутах). '
                   f'Минимальное значение {MIN_COOKING_TIME}.',
-        validators=[
-            MinValueValidator(MIN_COOKING_TIME),
-        ]
+        validators=[MinValueValidator(MIN_COOKING_TIME),]
     )
     image = models.ImageField(
         upload_to='recipes/images/',

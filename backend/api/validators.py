@@ -15,7 +15,9 @@ def username_by_pattern(username):
 def username_by_path_me(username):
     if username == URL_PATH_ME:
         raise serializers.ValidationError(
-            {"username": f'Под именем "{URL_PATH_ME}" '
-                         f'нельзя регистрироваться'}
+            {
+                "username":
+                    f'Под именем "{URL_PATH_ME}" нельзя регистрироваться'
+            }
         )
     return username

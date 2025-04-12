@@ -9,7 +9,7 @@ from django.db.models import Count, Sum
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet
-from rest_framework import  status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -36,8 +36,6 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     Tag,
-    UserFavourite,
-    UserShoppingCart
 )
 
 logger = logging.getLogger('views')
@@ -104,7 +102,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPagination
     filterset_class = RecipeFilter
 
-
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return RecipeCreateSerializer
@@ -114,7 +111,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in ('update', 'partial_update', 'destroy'):
             return [IsAuthenticated(), IsAuthor()]
         return [AllowAny()]
-
 
     def perform_create(self, serializer):
         logger.info('Начало обработки POST-запроса для создания рецепта')
@@ -132,7 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def toggle_favorite_or_cart(request, recipe, serializer_class,
-                                 related_name):
+                                related_name):
         user = request.user
         if request.method == 'POST':
             serializer = serializer_class(
@@ -161,7 +157,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             request, recipe, UserShoppingCartSerializer, 'user_shopping_cart'
         )
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated]
+    )
     def download_shopping_cart(self, request):
         user = request.user
         ingredients = RecipeIngredient.objects.filter(
@@ -218,9 +218,10 @@ class CustomUserViewSet(UserViewSet):
                     recipes = recipes[:recipes_limit]
                 except ValueError:
                     return Response(
-                        {'detail':
-                             'recipes_limit должен быть '
-                             'неотрицательным числом'},
+                        {
+                            'detail':
+                                'recipes_limit должен быть '
+                                'неотрицательным числом'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
             data['recipes'] = RecipeShortSerializer(recipes, many=True).data
@@ -228,7 +229,11 @@ class CustomUserViewSet(UserViewSet):
         user.subscribers.filter(subscriber=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated]
+    )
     def subscriptions(self, request):
         queryset = request.user.subscriptions.all().annotate(
             recipes_count=Count('subscribed_to__recipes')

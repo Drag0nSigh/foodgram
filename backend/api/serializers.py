@@ -14,7 +14,6 @@ from recipes.models import (
     RecipeIngredient,
     Tag,
     UserFavourite,
-    UserFavourite,
     UserShoppingCart
 )
 from users.models import Subscription
@@ -167,7 +166,6 @@ class IngredientInRecipeSerializer(serializers.Serializer):
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         source='ingredient',
-        queryset=Ingredient.objects.all(),
         read_only=True
     )
     name = serializers.SlugRelatedField(
