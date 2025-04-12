@@ -8,9 +8,9 @@ from recipes.models import (
     UserFavourite,
     UserShoppingCart
 )
-from users.models import User
 
 
+@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -19,6 +19,13 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+    min_num = 1
+
+
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -26,15 +33,16 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     search_fields = ('name', 'author__username')
     list_filter = ('tags',)
+    inlines = [RecipeIngredientInline]
     readonly_fields = ('favourite_count',)
 
+    @admin.display(description='Добавлений в избранное')
     def favourite_count(self, obj):
         # Подсчитываем количество добавлений в избранное для рецепта
         return obj.user_favourite.count()
 
-    favourite_count.short_description = 'Добавлений в избранное'
 
-
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -42,16 +50,7 @@ class TagAdmin(admin.ModelAdmin):
     )
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = (
-        'username',
-        'email',
-        'first_name',
-        'last_name',
-    )
-    search_fields = ['username', 'email']
-
-
+@admin.register(UserFavourite)
 class UserFavouriteAdmin(admin.ModelAdmin):
     list_display = (
         'user',
@@ -59,25 +58,9 @@ class UserFavouriteAdmin(admin.ModelAdmin):
     )
 
 
-class RecipeIngredientAdmin(admin.ModelAdmin):
-    list_display = (
-        'recipe',
-        'ingredient',
-        'amount',
-    )
-
-
+@admin.register(UserShoppingCart)
 class UserShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'recipe',
     )
-
-
-admin.site.register(UserShoppingCart, UserShoppingCartAdmin)
-admin.site.register(UserFavourite, UserFavouriteAdmin)
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
-admin.site.register(User, UserAdmin)

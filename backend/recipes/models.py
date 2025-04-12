@@ -31,7 +31,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('name',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -57,9 +57,10 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        unique_together = ('name', 'measurement_unit')
 
     def __str__(self):
         return self.name
@@ -99,25 +100,23 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',  # Промежуточную модель
-        related_name='recipes',
         verbose_name='Ингредиенты',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipes',
         verbose_name='Автор',
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipes',
         verbose_name='Теги',
     )
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('name',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        default_related_name = 'recipes'
 
     def __str__(self):
         return self.name
@@ -127,13 +126,11 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe_ingredients',
         verbose_name='Рецепт',
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='recipe_ingredients',
         verbose_name='Ингредиент',
     )
     amount = models.PositiveSmallIntegerField(
@@ -148,49 +145,43 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('recipe',)
         verbose_name = 'Соответствие ингредиента и рецепта'
         verbose_name_plural = 'Соответствие ингредиентов и рецептов'
+        default_related_name = 'recipe_ingredients'
+        unique_together = ('ingredient', 'recipe')
 
     def __str__(self):
         return f'{self.recipe.name} - {self.ingredient.name} ({self.amount})'
 
 
-class UserFavourite(models.Model):
+class BaseFavouriteShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='user_favourite',
         verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='user_favourite',
         verbose_name='Рецепт',
     )
 
     class Meta:
-        ordering = ('id',)
+        abstract = True
+        ordering = ('user__username',)
+        unique_together = ('user', 'recipe')
+
+
+class UserFavourite(BaseFavouriteShoppingCart):
+    class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
+        default_related_name = 'user_favourite'
 
 
-class UserShoppingCart(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='user_shopping_cart',
-        verbose_name='Пользователь',
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='user_shopping_cart',
-        verbose_name='Рецепт',
-    )
-
+class UserShoppingCart(BaseFavouriteShoppingCart):
     class Meta:
-        ordering = ('id',)
         verbose_name = 'Корзина покупок'
         verbose_name_plural = 'Корзины покупок'
+        default_related_name = 'user_shopping_cart'
