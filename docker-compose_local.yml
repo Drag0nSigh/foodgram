@@ -28,7 +28,7 @@ services:
     build:
       context: ./frontend/
     volumes:
-      - static:/app/build/static/
+      - static:/app/build/
 
   nginx:
     container_name: foodgram-proxy

@@ -23,8 +23,8 @@ User = get_user_model()
 logger = logging.getLogger('serializers')
 
 
-# Сериализатор для автора
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для автора"""
     is_subscribed = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
 
@@ -56,8 +56,8 @@ class UserSerializer(serializers.ModelSerializer):
         return None
 
 
-# Сериализатор для создания User
 class SignUpSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания User"""
     email = serializers.EmailField(
         max_length=MAX_LENGTH_EMAIL,
         required=True
@@ -105,8 +105,8 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
 
 
-# Сериализатор для загрузки аватара
 class AvatarSerializer(serializers.ModelSerializer):
+    """Сериализатор для загрузки аватара"""
     avatar = serializers.CharField(
         required=False,
         allow_blank=True
@@ -139,22 +139,22 @@ class AvatarSerializer(serializers.ModelSerializer):
         return instance
 
 
-# Сериализатор для получения списка ингредиентов
 class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения списка ингредиентов"""
     class Meta:
         model = Ingredient
         fields = '__all__'
 
 
-# Сериализатор для получения списка тегов
 class TagSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения списка тегов"""
     class Meta:
         model = Tag
         fields = '__all__'
 
 
-# Сериализатор для проверки ингредиентов при создании рецепта
 class IngredientInRecipeSerializer(serializers.Serializer):
+    """Сериализатор для проверки ингредиентов при создании рецепта"""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient'
@@ -162,8 +162,8 @@ class IngredientInRecipeSerializer(serializers.Serializer):
     amount = serializers.IntegerField(min_value=1)
 
 
-# Сериализатор для отображения ингредиентов в ответе
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для отображения ингредиентов в ответе"""
     id = serializers.PrimaryKeyRelatedField(
         source='ingredient',
         read_only=True
@@ -184,8 +184,8 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-# Сериализатор для создания рецепта
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания рецепта"""
     ingredients = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         many=True,
@@ -289,8 +289,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return RecipeReadSerializer(instance, context=self.context).data
 
 
-# Сериализатор для отображения рецепта
 class RecipeReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для отображения рецепта"""
     tags = TagSerializer(many=True)
     author = UserSerializer()
     ingredients = RecipeIngredientReadSerializer(
@@ -330,6 +330,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class UserFavouriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для избранного"""
     id = serializers.IntegerField(source='recipe.id')
     name = serializers.CharField(source='recipe.name')
     image = serializers.ImageField(source='recipe.image')
@@ -350,12 +351,14 @@ class UserFavouriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
+    """Сериализатор для коротких ссылок"""
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class UserShoppingCartSerializer(serializers.ModelSerializer):
+    """Сериализатор для корзины покупок"""
     class Meta:
         model = UserShoppingCart
         fields = ('user', 'recipe')
@@ -372,6 +375,7 @@ class UserShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализаор для подписок на пользователей"""
     class Meta:
         model = Subscription
         fields = ('subscriber', 'subscribed_to')

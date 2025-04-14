@@ -26,7 +26,7 @@ services:
   frontend:
     image: drag0nsigh/foodgram_frontend
     volumes:
-      - static:/app/build/static/
+      - static:/app/build/
 
   nginx:
     container_name: foodgram-proxy

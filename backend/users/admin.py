@@ -10,8 +10,14 @@ class UserAdmin(admin.ModelAdmin):
         'email',
         'first_name',
         'last_name',
+        'recipe_count',
     )
     search_fields = ['username', 'email']
+
+    @admin.display(description='Всего рецептов')
+    def recipe_count(self, obj):
+        # Подсчитываем количество рецептов у пользователя
+        return obj.recipes.count()
 
 
 @admin.register(Subscription)

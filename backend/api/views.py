@@ -192,7 +192,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return response
 
 
-class CustomUserViewSet(UserViewSet):
+class UserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     @action(detail=True, methods=['post', 'delete'],
