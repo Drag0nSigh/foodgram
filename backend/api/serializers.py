@@ -334,14 +334,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class UserFavouriteSerializer(serializers.ModelSerializer):
     """Сериализатор для избранного"""
-    id = serializers.IntegerField(source='recipe.id')
-    name = serializers.CharField(source='recipe.name')
-    image = serializers.ImageField(source='recipe.image')
-    cooking_time = serializers.IntegerField(source='recipe.cooking_time')
+    id = serializers.IntegerField(source='recipe.id', read_only=True)
+    name = serializers.CharField(source='recipe.name', read_only=True)
+    image = serializers.ImageField(source='recipe.image', read_only=True)
+    cooking_time = serializers.IntegerField(
+        source='recipe.cooking_time',
+        read_only=True,
+    )
 
     class Meta:
         model = UserFavourite
-        fields = ('id', 'name', 'image', 'cooking_time')
+        fields = ('id', 'name', 'image', 'cooking_time', 'recipe')
+        read_only_fields = ('id', 'name', 'image', 'cooking_time')
 
     def validate(self, data):
         user = self.context['request'].user
