@@ -198,8 +198,10 @@ class UserViewSet(UserViewSet):
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def subscribe(self, request, id=None):
+        logger.info('начало обработки Подписаться')
         user = get_object_or_404(User, id=id)
         if request.method == 'POST':
+            logger.info('POST запрос (подписаться)')
             serializer = SubscriptionSerializer(
                 data={'subscribed_to': user.id},
                 context={'request': request}
@@ -207,7 +209,7 @@ class UserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save(subscriber=request.user)
             data = UserSerializer(user, context={'request': request}).data
-            data['recipes_count'] = user.recipes_count
+            data['recipes_count'] = user.recipes.count()
             recipes_limit = request.query_params.get('recipes_limit')
             recipes = user.recipes.all()
             if recipes_limit:
