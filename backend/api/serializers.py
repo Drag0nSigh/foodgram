@@ -156,8 +156,7 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientInRecipeSerializer(serializers.Serializer):
     """Сериализатор для проверки ингредиентов при создании рецепта"""
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all(),
-        source='ingredient'
+        queryset=Ingredient.objects.all()
     )
     amount = serializers.IntegerField(min_value=1)
 
@@ -186,11 +185,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания рецепта"""
-    ingredients = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all(),
-        many=True,
-        source='recipe_ingredients.ingredient'
-    )
+    ingredients = IngredientInRecipeSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
@@ -213,18 +208,29 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Валидация ингредиентов
-        ingredients = data.get('recipe_ingredients', {}).get('ingredient', [])
-        if not ingredients:
+        logger.info('Валидация ингредиентов')
+        ingredients_data = data.get('ingredients', [])
+        if not ingredients_data:
             raise serializers.ValidationError(
                 {'ingredients': 'Необходимо указать хотя бы один ингредиент.'}
             )
-        ingredient_ids = [ingredient.pk for ingredient in ingredients]
+        ingredient_ids = []
+        for ingredient in ingredients_data:
+            if ingredient['amount'] < 1:
+                raise serializers.ValidationError(
+                    {
+                        'ingredients': 'Количество ингредиента должно быть '
+                                       'больше или равно 1.'
+                    }
+                )
+            ingredient_ids.append(ingredient['id'].pk)
         if len(ingredient_ids) != len(set(ingredient_ids)):
             raise serializers.ValidationError(
                 {'ingredients': 'Ингредиенты не должны повторяться.'}
             )
 
         # Валидация тегов
+        logger.info('Валидация тегов')
         tags = data.get('tags', [])
         if not tags:
             raise serializers.ValidationError(
@@ -248,16 +254,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredient_objects = [
             RecipeIngredient(
                 recipe=recipe,
-                ingredient=ingredient_data,
-                amount=ingredient_data.amount if hasattr(ingredient_data,
-                                                         'amount') else 1
+                ingredient=ingredient_data['id'],
+                amount=ingredient_data['amount']
             )
             for ingredient_data in ingredients_data
         ]
+        logger.info(f'Ингредиенты {ingredient_objects}')
         RecipeIngredient.objects.bulk_create(ingredient_objects)
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
+        logger.info(f'Ингредиенты {ingredients_data}')
         tags_data = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
 
@@ -267,21 +274,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients_data = validated_data.pop('ingredients')
-        tags_data = validated_data.pop('tags')
-        # Обновляем стандартные поля через super().update
+        ingredients_data = validated_data.pop('ingredients', None)
+        tags_data = validated_data.pop('tags', None)
         instance = super().update(instance, validated_data)
 
-        # Обновляем теги, если они переданы
         if tags_data is not None:
             instance.tags.set(tags_data)
 
-        # Обновляем ингредиенты, если переданы
         if ingredients_data is not None:
             instance.recipe_ingredients.all().delete()
             self.create_or_update_ingredients(instance, ingredients_data)
 
-        # Сохраняем обновленный рецепт
         instance.save()
         return instance
 
