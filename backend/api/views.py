@@ -239,17 +239,27 @@ class UserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
+        logger.info('начало обработки подписки')
         queryset = request.user.subscriptions.all().annotate(
             recipes_count=Count('subscribed_to__recipes')
-        )
+        ).order_by('id')
+        logger.info(f'Подписки: {list(queryset.values("subscribed_to__id"))}')
         page = self.paginate_queryset(queryset)
-        serializer = UserSerializer(page, many=True,
+        logger.info(f'Страница: {page}')
+        if page is not None:
+            users = [subscription.subscribed_to for subscription in page]
+        else:
+            users = [subscription.subscribed_to for subscription in queryset]
+        serializer = UserSerializer(users, many=True,
                                     context={'request': request})
+        logger.info(f'Сериализованные данные: {serializer.data}')
         data = []
         recipes_limit = request.query_params.get('recipes_limit')
+        logger.info(f'Лимит {recipes_limit}')
         for user_data in serializer.data:
             user = User.objects.get(id=user_data['id'])
             recipes = user.recipes.all()
+            logger.info(f'Все рецепты пользователя {recipes}')
             if recipes_limit:
                 try:
                     recipes_limit = int(recipes_limit)
@@ -266,8 +276,11 @@ class UserViewSet(UserViewSet):
                     )
             user_data['recipes'] = RecipeShortSerializer(recipes,
                                                          many=True).data
-            user_data['recipes_count'] = user.recipes_count
+            logger.info(f'рецепт {user_data["recipes"]}')
+            user_data['recipes_count'] = user.recipes.count()
+            logger.info(f'количество {user_data["recipes_count"]}')
             data.append(user_data)
+            logger.info(f'данные {data}')
         return self.get_paginated_response(data)
 
 
