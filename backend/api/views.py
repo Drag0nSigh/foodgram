@@ -6,6 +6,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet
@@ -100,6 +101,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = CustomPagination
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
